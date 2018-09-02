@@ -10,6 +10,7 @@ package seedu.addressbook;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringBufferInputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -444,7 +445,7 @@ public class AddressBook {
 
     /**
      * Finds and lists all persons in address book whose name contains any of the argument keywords.
-     * Keyword matching is case sensitive.
+     * Keyword matching is case-insensitive.
      *
      * @param commandArgs full command args string from the user
      * @return feedback display message for the operation result
@@ -478,6 +479,7 @@ public class AddressBook {
 
     /**
      * Retrieves all persons in the full model whose names contain some of the specified keywords.
+     * This method is case-insensitive.
      *
      * @param keywords for searching
      * @return list of persons in full model with name containing some of the keywords
@@ -486,7 +488,7 @@ public class AddressBook {
         final ArrayList<String[]> matchedPersons = new ArrayList<>();
         for (String[] person : getAllPersonsInAddressBook()) {
             final Set<String> wordsInName = new HashSet<>(splitByWhitespace(getNameFromPerson(person)));
-            if (!Collections.disjoint(wordsInName, keywords)) {
+            if (!Collections.disjoint(convertSetToLowerCase(wordsInName), convertSetToLowerCase((Set<String>)keywords))) {
                 matchedPersons.add(person);
             }
         }
@@ -1164,4 +1166,14 @@ public class AddressBook {
         return new ArrayList<>(Arrays.asList(toSplit.trim().split("\\s+")));
     }
 
+    private static Set<String> convertSetToLowerCase(Set<String> toBeConverted) {
+        final Set<String> convertedSet = new HashSet<String>();
+
+        String[] stringsArray = toBeConverted.toArray(new String[0]);
+        for (int i = 0; i < stringsArray.length; i++) {
+            convertedSet.add(stringsArray[i].toLowerCase());
+        }
+
+        return convertedSet;
+    }
 }
